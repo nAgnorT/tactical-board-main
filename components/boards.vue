@@ -31,10 +31,11 @@ import { Input } from "postcss";
 const menu = defineModel()
     onMounted(() => {
       function deleteData() {
-        saveAwayPlayerData([])
-        saveHomePlayerData([])
-        saveLineData([])
-        savePolygonData([])
+        const dData = []
+        saveAwayPlayerData(dData)
+        saveHomePlayerData(dData)
+        saveLineData(dData)
+        savePolygonData(dData)
       }
       let drawFunction
       let svgSize
@@ -60,6 +61,7 @@ const menu = defineModel()
       const containWidth = ref(0)
       const containHeight = ref(0)
       watch(containWidth, () => {
+        svg.selectAll("*").remove()
         drawd3()
       })
       // watch(containHeight, () => {
@@ -110,10 +112,11 @@ const menu = defineModel()
             ratio = pitchWidth/100
             loadHorizontalPitch(svg,pitchWidth,centerX,centerY)
     }
+    toggle(menu.value)
     svg.call(loadPlayerData, ratio, centerX,centerY)
     svg.call(loadLineData, ratio, centerX,centerY)
     svg.call(loadPolygon)
-    toggle(menu.value)
+
 function toggle(item) {
   svg.on("mouseup", null)
     svg.on("mousedown", null)
