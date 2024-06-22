@@ -16,7 +16,7 @@ import { onMounted, ref } from "vue";
 import interactDrag from "~/utils/d3Utils/drawing/interactDrag";
 import interact from "interactjs"  
 import axios from "axios";
-import { saveAwayPlayerData, saveLineData,saveHomePlayerData, savePolygonData } from "~/utils/d3Utils/controller/data.controller";
+import { saveAwayPlayerData, saveLineData,saveHomePlayerData } from "~/utils/d3Utils/controller/data.controller";
 import {drawLine,loadLineData} from "../utils/d3Utils/drawing/lineDrawing"
 import isMobile from "~/utils/d3Utils/checking/isMobile";
 import { isHorizontal, isVertical } from "~/utils/d3Utils/checking/checkPitch";
@@ -27,15 +27,9 @@ import { drawFreeHand } from "~/utils/d3Utils/drawing/freehandDrawing";
 import { drawRectangle } from "~/utils/d3Utils/drawing/rectangleDrawing";
 import { drawPolygon, loadPolygon } from "~/utils/d3Utils/drawing/polygonDrawing";
 import { useActionStore } from '~/stores/store';
-import { Input } from "postcss";
 const menu = defineModel()
+      console.log(menu.value)
     onMounted(() => {
-      function deleteData() {
-        saveAwayPlayerData([])
-        saveHomePlayerData([])
-        saveLineData([])
-        savePolygonData([])
-      }
       let drawFunction
       let svgSize
       let svgWidth= 1,svgHeight= 1
@@ -47,50 +41,28 @@ const menu = defineModel()
       let centerX, centerY
       // console.log(test.value)
       const menuItemMap = {
-            "mouse": () => {},
+            "mouse": (svg) => {},
             "homeplayer": homePlayerDraw,
             "awayplayer":awayPlayerDraw,
             "line": drawLine,
             "polygon": drawPolygon,
             "curve": drawCurveNatural,
             "rectangle": drawRectangle,
-            "draw": drawFreeHand,
-            "delete": deleteData
+            "draw": drawFreeHand
       }
-      const containWidth = ref(0)
-      const containHeight = ref(0)
-      watch(containWidth, () => {
-        drawd3()
-      })
-      // watch(containHeight, () => {
-      //   drawd3()
-      // })
-      watch(menu, ()=> {
-        console.log(menu.value)
-        drawd3()
-      })
       // console.log(container.attr('action'))
-      // interactDrag('home-player')
-      // interactDrag('away-player')
+      interactDrag('home-player')
+      interactDrag('away-player')
       function resize() {
-
+        svg.selectAll("*").remove()
         const inputContainer = document.getElementById('svg-container')
         const inputWidth = inputContainer.offsetWidth
         const inputHeight = inputContainer.offsetHeight
-        containWidth.value = inputWidth
-        containHeight.value = inputHeight
-      }
-
-      window.addEventListener("resize",resize);
-      resize()
-      // drawd3()
-      function drawd3() {
-        svg.selectAll("*").remove()
         if(isMobile()){
-        svgSize = isVertical(svgWidth, svgHeight, containWidth.value, containWidth.value)
+        svgSize = isVertical(svgWidth, svgHeight, inputWidth, inputHeight)
     }
     else{
-        svgSize = isHorizontal(svgWidth, svgHeight, containWidth.value, containWidth.value)
+        svgSize = isHorizontal(svgWidth, svgHeight, inputWidth, inputHeight)
     }
     svgWidth = svgSize.svgWidth
     svgHeight = svgSize.svgHeight
@@ -114,18 +86,21 @@ const menu = defineModel()
     svg.call(loadLineData, ratio, centerX,centerY)
     svg.call(loadPolygon)
     toggle(menu.value)
-function toggle(item) {
+    function toggle(item) {
   svg.on("mouseup", null)
     svg.on("mousedown", null)
     svg.on("click", null)   // remove previous event listener 
     drawFunction = menuItemMap[item]
+    console.log(drawFunction) 
     if (item === "homeplayer" || item === "awayplayer" || item ==="line") {
       svg.call(drawFunction, ratio, centerX, centerY)
     }
-    else if(item ==="delete" || item ==="mouse") drawFunction
     else svg.call(drawFunction)
 } 
-}
+
+      }
+      window.addEventListener("resize",resize);
+      resize()
     })
 </script>
   <style>
