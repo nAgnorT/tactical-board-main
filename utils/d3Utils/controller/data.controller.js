@@ -89,6 +89,23 @@ function saveAwayPlayerData(playerData) {
         .catch(error => console.error('Error sending to server:', error));
     });
   }
+  function deleteData1() {
+    axios.get(`${server}/line.data.json`)
+  .then(response => {
+    const data = response.data;
+    data = {}; // Xóa tất cả dữ liệu
+    axios.put(`${server}/line.data.json`, data)
+      .then(() => {
+        console.log('Dữ liệu đã được xóa khỏi tệp JSON.');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  }
   export {
     getLineData,
     getHomePlayerData,
@@ -97,5 +114,6 @@ function saveAwayPlayerData(playerData) {
     saveHomePlayerData,
     saveAwayPlayerData,
     saveLineData,
-    savePolygonData
+    savePolygonData,
+    deleteData1
   }

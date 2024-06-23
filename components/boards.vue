@@ -16,7 +16,7 @@ import { onMounted, ref } from "vue";
 import interactDrag from "~/utils/d3Utils/drawing/interactDrag";
 import interact from "interactjs"  
 import axios from "axios";
-import { saveAwayPlayerData, saveLineData,saveHomePlayerData, savePolygonData } from "~/utils/d3Utils/controller/data.controller";
+import { saveAwayPlayerData, saveLineData,saveHomePlayerData, savePolygonData, deleteData1 } from "~/utils/d3Utils/controller/data.controller";
 import {drawLine,loadLineData} from "../utils/d3Utils/drawing/lineDrawing"
 import isMobile from "~/utils/d3Utils/checking/isMobile";
 import { isHorizontal, isVertical } from "~/utils/d3Utils/checking/checkPitch";
@@ -34,8 +34,9 @@ const menu = defineModel()
         const dData = []
         saveAwayPlayerData(dData)
         saveHomePlayerData(dData)
-        saveLineData(dData)
+        // saveLineData(dData)
         savePolygonData(dData)
+        deleteData1()
       }
       let drawFunction
       let svgSize
@@ -60,18 +61,9 @@ const menu = defineModel()
       }
       const containWidth = ref(0)
       const containHeight = ref(0)
-      watch(containWidth, () => {
-        svg.selectAll("*").remove()
+      watch([containWidth, containHeight, menu], () => {
         drawd3()
       })
-      // watch(containHeight, () => {
-      //   drawd3()
-      // })
-      watch(menu, ()=> {
-        console.log(menu.value)
-        drawd3()
-      })
-      // console.log(container.attr('action'))
       // interactDrag('home-player')
       // interactDrag('away-player')
       function resize() {
@@ -85,14 +77,13 @@ const menu = defineModel()
 
       window.addEventListener("resize",resize);
       resize()
-      // drawd3()
       function drawd3() {
         svg.selectAll("*").remove()
         if(isMobile()){
-        svgSize = isVertical(svgWidth, svgHeight, containWidth.value, containWidth.value)
+        svgSize = isVertical(svgWidth, svgHeight, containWidth.value, containHeight.value)
     }
     else{
-        svgSize = isHorizontal(svgWidth, svgHeight, containWidth.value, containWidth.value)
+        svgSize = isHorizontal(svgWidth, svgHeight, containWidth.value, containHeight.value)
     }
     svgWidth = svgSize.svgWidth
     svgHeight = svgSize.svgHeight
