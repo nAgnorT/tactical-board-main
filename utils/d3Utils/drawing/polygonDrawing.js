@@ -161,6 +161,11 @@ async function loadPolygon(svg) {
         .style('fill', "#008080")
         .style("cursor", "pointer")
         .style("opacity",0.2)
+        .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+        )
     }
     function dragstarted(event) { 
         startX = event.x

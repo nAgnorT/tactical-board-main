@@ -45,6 +45,36 @@ async function getPolygonData() {
     return null;
   }
 }
+async function getCurveData() {
+  try {
+    const response = await axios.get(`${server}/api/curve_data`);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
+async function getRecData() {
+  try {
+    const response = await axios.get(`${server}/api/rec_data`);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
+async function getFreehandData() {
+  try {
+    const response = await axios.get(`${server}/api/freehand_data`);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
 function saveLineData(lineData) {
     
     return d3.json(`${server}/api/line_data`)
@@ -88,14 +118,50 @@ function saveAwayPlayerData(playerData) {
         .catch(error => console.error('Error sending to server:', error));
     });
   }
+  function saveCurveData(polygonData) {
+    return d3.json(`${server}/api/curve_data`)
+    .then(jsonData => {
+        jsonData=[]
+        jsonData.push(...polygonData)
+        axios.post(`${server}/update_curve_data`, jsonData)
+        .then(response => { })
+        .catch(error => console.error('Error sending to server:', error));
+    });
+  }
+  function saveRecData(polygonData) {
+    return d3.json(`${server}/api/rec_data`)
+    .then(jsonData => {
+        jsonData=[]
+        jsonData.push(...polygonData)
+        axios.post(`${server}/update_rec_data`, jsonData)
+        .then(response => { })
+        .catch(error => console.error('Error sending to server:', error));
+    });
+  }
+  function saveFreehandData(polygonData) {
+    return d3.json(`${server}/api/freehand_data`)
+    .then(jsonData => {
+        jsonData=[]
+        jsonData.push(...polygonData)
+        axios.post(`${server}/update_freehand_data`, jsonData)
+        .then(response => { })
+        .catch(error => console.error('Error sending to server:', error));
+    });
+  }
 
   export {
     getLineData,
     getHomePlayerData,
     getAwayPlayerData,
     getPolygonData,
+    getCurveData,
+    getFreehandData,
+    getRecData,
     saveHomePlayerData,
     saveAwayPlayerData,
     saveLineData,
-    savePolygonData
+    savePolygonData,
+    saveCurveData,
+    saveRecData,
+    saveFreehandData
   }

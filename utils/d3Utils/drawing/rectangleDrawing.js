@@ -1,10 +1,12 @@
 import * as d3 from "d3"
+import { getRecData } from "../controller/data.controller";
 function unSelectAllElements(svg) {
     svg.selectAll('.selected').classed('selected', false);
     svg.selectAll('.select-border').attr('stroke', 'none')
     svg.selectAll('.bot-left, .bot-right, .top-left, .top-right').attr('fill', 'none')
 }
-function drawRectangle(svg) {
+async function drawRectangle(svg) {
+    let recData = await getRecData
     let startPoint, g, startX, startY, endX, endY
     let drawing = false
     let transformX = 0,

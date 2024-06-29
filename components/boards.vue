@@ -16,14 +16,14 @@ import { onMounted, ref } from "vue";
 import interactDrag from "~/utils/d3Utils/drawing/interactDrag";
 import interact from "interactjs"  
 import axios from "axios";
-import { saveAwayPlayerData, saveLineData,saveHomePlayerData, savePolygonData } from "~/utils/d3Utils/controller/data.controller";
+import { saveAwayPlayerData, saveLineData,saveHomePlayerData, savePolygonData, saveCurveData, saveFreehandData } from "~/utils/d3Utils/controller/data.controller";
 import {drawLine,loadLineData} from "../utils/d3Utils/drawing/lineDrawing"
 import isMobile from "~/utils/d3Utils/checking/isMobile";
 import { isHorizontal, isVertical } from "~/utils/d3Utils/checking/checkPitch";
 import { loadHorizontalPitch,loadVerticalPitch } from "~/utils/d3Utils/drawing/pitchDrawing";
 import { homePlayerDraw,awayPlayerDraw,loadPlayerData } from "~/utils/d3Utils/drawing/playerDrawing";
-import { drawCurveNatural } from "~/utils/d3Utils/drawing/blockDrawing";
-import { drawFreeHand } from "~/utils/d3Utils/drawing/freehandDrawing";
+import { drawCurveNatural, loadCurveData } from "~/utils/d3Utils/drawing/blockDrawing";
+import { drawFreeHand, loadFreeHandData } from "~/utils/d3Utils/drawing/freehandDrawing";
 import { drawRectangle } from "~/utils/d3Utils/drawing/rectangleDrawing";
 import { drawPolygon, loadPolygon } from "~/utils/d3Utils/drawing/polygonDrawing";
 import { Input } from "postcss";
@@ -35,6 +35,8 @@ const menu = defineModel()
         saveHomePlayerData(dData)
         saveLineData(dData)
         savePolygonData(dData)
+        saveCurveData(dData)
+        saveFreehandData(dData)
       }
       function ct22(){
         saveHomePlayerData(home433)
@@ -250,6 +252,8 @@ const menu = defineModel()
     svg.call(loadPlayerData, ratio, centerX,centerY)
     svg.call(loadLineData, ratio, centerX,centerY)
     svg.call(loadPolygon)
+    svg.call(loadCurveData)
+    svg.call(loadFreeHandData)
 
 function toggle(item) {
   svg.on("mouseup", null)

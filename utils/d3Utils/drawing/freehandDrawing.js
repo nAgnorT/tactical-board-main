@@ -1,5 +1,7 @@
 import * as d3 from "d3"
-function drawFreeHand(svg) {
+import { getFreehandData, saveFreehandData } from "../controller/data.controller";
+async function drawFreeHand(svg) {
+    let freehandData = await getFreehandData()
     let points = [],
     g, drawing = false,
     startPoint
@@ -29,20 +31,46 @@ svg.on('mousemove', function(event) {
     
         g.select('path').remove();
     
-        g.append('path').attr('d', curve(points)).attr('stroke', '#53DBF3').attr('fill', 'none').attr('stroke-width', 3).attr("marker-end", "url(#triangle)");
+        g.append('path').attr('d', curve(points)).attr('stroke', '#53DBF3').attr('fill', 'none').attr('stroke-width', 3)
+        // .attr("marker-end", "url(#triangle)");
 
 })
 
 svg.on('mouseup', function(event) {
         g.remove()
         g = svg.append('g')
+        let count = freehandData.length === 0 ?1 : freehandData[freehandData.length-1].number +1
+        const freehandCor = {
+            number: count,
+            points:points
+        }
+        freehandData.push(freehandCor)
+        saveFreehandData(freehandData)
+        
 
-        g.append('path').attr('d', curve(points)).attr('stroke', '#53DBF3').attr('fill', 'none').attr('stroke-width', 6).style("cursor", "pointer").attr("marker-end", "url(#triangle)")
+        g.append('path').attr('d', curve(points)).attr('stroke', '#53DBF3').attr('fill', 'none').attr('stroke-width', 6).style("cursor", "pointer")
+        // .attr("marker-end", "url(#triangle)")
 
-        points.splice(0)
+        points= []
         drawing = false
 })
 }
+
+async function loadFreeHandData(svg) {
+    let freehandData = await getFreehandData()
+    const curve = d3.line().curve(d3.curveCatmullRom.alpha(1));
+    for (let i = 0; i<freehandData.length;i++){
+        var g = svg.append('g')
+        g.append('path')
+        .attr('d', curve(freehandData[i].points))
+        .attr('stroke', '#53DBF3')
+        .attr('fill', 'none')
+        .attr('stroke-width', 6)
+        .style("cursor", "pointer")
+    }
+        
+}
 export {
-    drawFreeHand
+    drawFreeHand,
+    loadFreeHandData
 }

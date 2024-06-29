@@ -1,10 +1,12 @@
 import * as d3 from "d3"
+import { getCurveData,saveCurveData } from "../controller/data.controller";
 function unSelectAllElements(svg) {
     svg.selectAll('.selected').classed('selected', false);
     svg.selectAll('.select-border').attr('stroke', 'none')
     svg.selectAll('.bot-left, .bot-right, .top-left, .top-right').attr('fill', 'none')
 }
-function drawCurveNatural(svg) {
+async function drawCurveNatural(svg) {
+    let curveData = await getCurveData()
         let points = [],
         g, drawing = false,
         startPoint, dx, dy, marker, inSwing = false,
@@ -65,16 +67,46 @@ function drawCurveNatural(svg) {
     svg.on('mouseup', function(event) {
             g.remove()
             g = svg.append('g')
-    
+            let count = curveData.length === 0 ?1 : curveData[curveData.length-1].number +1
+            const curveCor = {
+                number: count,
+                points:points
+            }
+            curveData.push(curveCor)
+            saveCurveData(curveData)
             g.append('path').attr('d', curve(points)).attr('stroke', '#53DBF3').attr('fill', 'none').attr('stroke-width', 6).style("cursor", "pointer").attr("marker-end", "url(#triangle)")
     
-            points.splice(0)
+            points= []
             inSwing = false
             outSwing = false
             drawing = false
     })
 }
+async function loadCurveData(svg) {
+    let marker
+    let curveData = await getCurveData()
+    if (!marker) {
+        marker = svg.append("g:defs").append("g:marker")
+            .attr("id", "triangle")
+            .attr("markerHeight", 4)
+            .attr("orient", "auto")
+            .style("fill", "#53DBF3")
+            .append("path")
+            .attr("d", "M 0 0 3 2 0 4")
+            .attr("stroke", "53DBF3");
+    }
+    const curve = d3.line().curve(d3.curveBundle.beta(0.7));
+    for(let i =0; i<curveData.length;i++) {
+        var g = svg.append('g')
+        g.append('path').attr('d', curve(curveData[i].points))
+        .attr('stroke', '#53DBF3').attr('fill', 'none')
+        .attr('stroke-width', 6)
+        .style("cursor", "pointer")
+        .attr("marker-end", "url(#triangle)")
+    }
 
+}
 export{
-    drawCurveNatural
+    drawCurveNatural,
+    loadCurveData
 }
