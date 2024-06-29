@@ -15,6 +15,7 @@
   <button id="polygon"  width="100" height="30" class="svg-button" @click="updateAction('polygon')">Vẽ da giac</button>
   <button id="draw"  width="100" height="30"class="svg-button" @click="updateAction('draw')">Vẽ tu do</button>
   <button id="delete"  width="100" height="30"class="svg-button" @click="updateAction('delete')">Xoa tat ca</button>
+  <button id="22ct"  width="100" height="30"class="svg-button" @click="updateAction('22ct')">22ct</button>
     </div> 
         <slot />
     </div>
